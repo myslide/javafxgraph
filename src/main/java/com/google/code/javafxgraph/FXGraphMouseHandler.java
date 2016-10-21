@@ -32,7 +32,7 @@ public class FXGraphMouseHandler {
         graph = aGraph;
 
         mousePressedEventHandler = new EventHandler<MouseEvent>() {
-            @Override
+            
             public void handle(MouseEvent aEvent) {
 
                 Object theSource = aEvent.getSource();
@@ -56,7 +56,7 @@ public class FXGraphMouseHandler {
         };
 
         mouseDraggedEventHandler = new EventHandler<MouseEvent>() {
-            @Override
+            
             public void handle(MouseEvent aEvent) {
 
                 graph.currentTool.mouseDragged(aEvent);
@@ -65,7 +65,7 @@ public class FXGraphMouseHandler {
         };
 
         mouseReleasedEventHandler = new EventHandler<MouseEvent>() {
-            @Override
+            
             public void handle(MouseEvent aEvent) {
 
                 graph.currentTool.mouseReleased(aEvent);
@@ -74,7 +74,7 @@ public class FXGraphMouseHandler {
         };
 
         scrolLEventHandler = new EventHandler<ScrollEvent>() {
-            @Override
+            
             public void handle(ScrollEvent aEvent) {
                 if (aEvent.getDeltaY() > 0) {
                     graph.zoomHandler.zoomOneStepOut();

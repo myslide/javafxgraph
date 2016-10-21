@@ -1,0 +1,53 @@
+/* JavaFX CSS for the FXgraph style - see https://docs.oracle.com/javafx/2/api/javafx/scene/doc-files/cssref.html */
+/*the default edge*/
+#path {
+	 -fx-stroke:black;
+     -fx-stroke-width:1.0;
+}
+
+/*the default edge at mouse over */
+#path:hover {
+	 -fx-stroke:grey;
+	 -fx-stroke-width:1.0;
+}
+/*The point settings are fix*/
+#point {
+  -fx-fill:transparent;
+  -fx-width:5.0;
+  -fx-height:5.0;
+}
+
+#point:hover {
+ -fx-stroke:black;
+ -fx-stroke-width:1px;
+ 
+}
+
+/*END DEFAULTS*/
+
+#path-blue {
+  -fx-stroke:blue;
+  -fx-stroke-width:1.0;
+}
+
+#path-blue:hover {
+  -fx-stroke:cornflowerblue;
+}
+
+#path-green {
+  -fx-stroke:green;
+  -fx-stroke-width:1.0;
+}
+
+#path-green:hover {
+  -fx-stroke:chartreuse;
+}
+
+#path-red {
+  -fx-stroke:red;
+  -fx-stroke-width:2.0;
+}
+
+#path-red:hover {
+  -fx-stroke:tomato;
+}

@@ -37,10 +37,10 @@ public class FXGraphZoomHandler {
 
         Duration theDuration = Duration.millis(1000 / 25);
         KeyFrame theOneFrame = new KeyFrame(theDuration, new EventHandler<ActionEvent>() {
-            @Override
             public void handle(ActionEvent actionEvent) {
                 updateNodePositionsAndScale();
             }
+        	 
         });
 
         zoomTimeLine = TimelineBuilder.create().cycleCount(Animation.INDEFINITE).keyFrames(theOneFrame).build();

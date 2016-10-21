@@ -30,8 +30,7 @@ public class FXGraphApplication1 extends Application {
         aStage.setTitle(getClass().getSimpleName());
 
         FXGraphBuilder theBuilder = FXGraphBuilder.create();
-        FXGraph theGraph = theBuilder.build();
-
+        FXGraph theGraph = theBuilder.grid(5).build();
         List<FXNode> theNodes = new ArrayList<FXNode>();
         int centerX = 400;
         int centerY = 300;
@@ -51,10 +50,15 @@ public class FXGraphApplication1 extends Application {
         for (int i = 0; i < theNodes.size() - 1; i++) {
 
             FXEdgeBuilder theEdgeBuilder = new FXEdgeBuilder(theGraph);
-            theEdgeBuilder.source(theNodes.get(i)).destination(theNodes.get(i+1)).build();
+            theEdgeBuilder.styleId("path-green").source(theNodes.get(i)).destination(theNodes.get(i+1)).build();
         }
-
-        aStage.setScene(new Scene(theGraph));
+        Scene scene=new Scene(theGraph);
+        try{
+        scene.getStylesheets().add(theGraph.getStylesheet());
+        }catch(NullPointerException ex){
+        	//No style sheets available..
+        }
+        aStage.setScene(scene);
 
         aStage.show();
     }

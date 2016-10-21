@@ -15,14 +15,23 @@ package com.google.code.javafxgraph;
 
 public class FXGraphBuilder {
 
-    public static FXGraphBuilder create() {
-        return new FXGraphBuilder();
+	private int grid;
+
+	public static FXGraphBuilder create() {
+		return new FXGraphBuilder();
+	}
+
+	public FXGraphBuilder grid(int grid){
+    	this.grid=grid;
+    	return this;
     }
 
-    private FXGraphBuilder() {
-    }
+	private FXGraphBuilder() {
+	}
 
-    public FXGraph build() {
-        return new FXGraph();
-    }
+	public FXGraph build() {
+		FXGraph theGraph= new FXGraph();
+		theGraph.setGrid(grid);
+		return theGraph;
+	}
 }

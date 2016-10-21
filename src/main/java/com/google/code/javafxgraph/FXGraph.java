@@ -19,77 +19,92 @@ import javafx.scene.layout.Pane;
 
 public class FXGraph extends ScrollPane {
 
-    static final double NODES_Z_OFFSET = 10;
-    static final double EDGES_Z_OFFSET = 10;
+	static final double NODES_Z_OFFSET = 10;
+	static final double EDGES_Z_OFFSET = 10;
 
-    Pane contentPane;
+	Pane contentPane;
 
-    FXGraphModel model;
-    FXGraphSelectionTool selectionTool;
-    FXGraphZoomHandler zoomHandler;
+	FXGraphModel model;
+	FXGraphSelectionTool selectionTool;
+	FXGraphZoomHandler zoomHandler;
 
-    FXTool currentTool;
+	FXTool currentTool;
 
-    private FXGraphMouseHandler mouseHandler;
+	private FXGraphMouseHandler mouseHandler;
 
-    public FXGraph() {
+	public FXGraph() {
 
-        model = new FXGraphModel();
+		model = new FXGraphModel();
 
-        setVbarPolicy(ScrollBarPolicy.AS_NEEDED);
-        setHbarPolicy(ScrollBarPolicy.AS_NEEDED);
-        contentPane = new Pane();
-        setContent(contentPane);
+		setVbarPolicy(ScrollBarPolicy.AS_NEEDED);
+		setHbarPolicy(ScrollBarPolicy.AS_NEEDED);
+		contentPane = new Pane();
+		setContent(contentPane);
 
-        zoomHandler = new FXGraphZoomHandler(this);
-        selectionTool = new FXGraphSelectionTool(contentPane, model, zoomHandler);
-        mouseHandler = new FXGraphMouseHandler(this);
+		zoomHandler = new FXGraphZoomHandler(this);
+		selectionTool = new FXGraphSelectionTool(contentPane, model, zoomHandler);
+		mouseHandler = new FXGraphMouseHandler(this);
 
-        mouseHandler.registerHandlerFor(contentPane);
+		mouseHandler.registerHandlerFor(contentPane);
 
-        currentTool = selectionTool;
-    }
+		currentTool = selectionTool;
+	}
 
-    void updateEdge(FXEdge aEdge, double aZoomLevel) {
-        aEdge.removeAllNodes(contentPane);
-        aEdge.computeDisplayShape(aZoomLevel);
-        aEdge.addAllNodes(contentPane, EDGES_Z_OFFSET);
-        mouseHandler.registerNewEdge(aEdge);
-    }
+	/**
+	 * Set a grid >1 to align the nodes easy.
+	 * 
+	 * @param grid
+	 *            a value btw 1 ... pos.infinity
+	 * @see FXGraphSelectionTool#setGrid(double)
+	 */
+	public void setGrid(int grid) {
+		selectionTool.setGrid(grid);
+	}
 
-    void updateEdgeNodesFor(FXNode aNode, double aZoomLevel) {
-        for (FXEdge theEdge : model.getEdges()) {
-            if (theEdge.source == aNode || theEdge.destination == aNode) {
-                updateEdge(theEdge, aZoomLevel);
-            }
-        }
-    }
+	void updateEdge(FXEdge aEdge, double aZoomLevel) {
+		aEdge.removeAllNodes(contentPane);
+		aEdge.computeDisplayShape(aZoomLevel);
+		aEdge.addAllNodes(contentPane, EDGES_Z_OFFSET);
+		mouseHandler.registerNewEdge(aEdge);
+	}
 
-    void updateEdgeNodesFor(FXNode aNode) {
-        updateEdgeNodesFor(aNode, zoomHandler.currentZoomLevel);
-    }
+	void updateEdgeNodesFor(FXNode aNode, double aZoomLevel) {
+		for (FXEdge theEdge : model.getEdges()) {
+			if (theEdge.source == aNode || theEdge.destination == aNode) {
+				updateEdge(theEdge, aZoomLevel);
+			}
+		}
+	}
 
-    public void updateSelectionInScene() {
-        selectionTool.updateSelectionInScene();
-    }
+	void updateEdgeNodesFor(FXNode aNode) {
+		updateEdgeNodesFor(aNode, zoomHandler.currentZoomLevel);
+	}
 
-    public void addNode(FXNode aNode) {
+	public void updateSelectionInScene() {
+		selectionTool.updateSelectionInScene();
+	}
 
-        aNode.wrappedNode.setTranslateZ(NODES_Z_OFFSET);
+	public void addNode(FXNode aNode) {
 
-        contentPane.getChildren().add(aNode.wrappedNode);
+		aNode.wrappedNode.setTranslateZ(NODES_Z_OFFSET);
 
-        model.registerNewNode(aNode);
-        mouseHandler.registerNewNode(aNode);
-    }
+		contentPane.getChildren().add(aNode.wrappedNode);
 
-    public void addEdge(FXEdge aEdge) {
+		model.registerNewNode(aNode);
+		mouseHandler.registerNewNode(aNode);
+	}
 
-        aEdge.computeDisplayShape(zoomHandler.currentZoomLevel);
+	public void addEdge(FXEdge aEdge) {
 
-        aEdge.addAllNodes(contentPane, EDGES_Z_OFFSET);
-        model.registerNewEdge(aEdge);
+		aEdge.computeDisplayShape(zoomHandler.currentZoomLevel);
 
-        mouseHandler.registerNewEdge(aEdge);
-    }
+		aEdge.addAllNodes(contentPane, EDGES_Z_OFFSET);
+		model.registerNewEdge(aEdge);
+
+		mouseHandler.registerNewEdge(aEdge);
+	}
+
+	public String getStylesheet() throws NullPointerException {
+		return getClass().getResource("fxgraph.css").toExternalForm();
+	}
 }
