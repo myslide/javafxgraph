@@ -5,3 +5,5 @@ The JavaFX Graph is a small GUI panel to embed into a JavaFX application. It dis
 You can move the elements within the panel. You are able to set different css-styles.
 
 I will use this component for block diagrams in a desktop application.
+
+![Screenshot](StyleDemoScreenshot.jpg)
