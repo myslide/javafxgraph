@@ -23,6 +23,7 @@ public class FXEdgeBuilder {
 	private FXNode destination;
 	private String styleId;
 	private List<FXEdgeWayPoint> wayPoints = new ArrayList<FXEdgeWayPoint>();
+	private EndPointProviderI endPointProvider=FXEdge.DEFAULT_ENDPOINTPROVIDER;
 
 	public FXEdgeBuilder(FXGraph aGraph) {
 		graph = aGraph;
@@ -37,6 +38,10 @@ public class FXEdgeBuilder {
 		destination = aDestination;
 		return this;
 	}
+	public FXEdgeBuilder endPointProvider(EndPointProviderI endPointProvider) {
+		this.endPointProvider = endPointProvider;
+		return this;
+	}
 
 	public FXEdgeBuilder wayPoint(FXEdgeWayPoint aWayPoint) {
 		wayPoints.add(aWayPoint);
@@ -49,6 +54,7 @@ public class FXEdgeBuilder {
 
 	public FXEdge build() {
 		FXEdge theEdge = new FXEdge(graph, source, destination);
+		theEdge.setEndPointProvider(endPointProvider);
 		theEdge.wayPoints.addAll(wayPoints);
 		theEdge.setStyleId(styleId);
 		graph.addEdge(theEdge);

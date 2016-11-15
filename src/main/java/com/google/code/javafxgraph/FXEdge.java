@@ -36,9 +36,7 @@ public class FXEdge {
 	private Tooltip toolTipPoint;
 	private static final String DEFAULT_STYLEID = "path";
 	private static final String DEFAULT_POINTSTYLEID = "point";
-	final static String STANDARD_POINT_STYLE = "-fx--fx-fill:transparent;";
-	final static String HOVERED_POINT_STYLE = "-fx-stroke-width:1;-fx-stroke:black;";
-	/*makes the rectangle properties clear*/
+	/* makes the rectangle properties clear */
 	private final static double WIDTH = 4;
 	private final static double HALFWIDTH = WIDTH / 2;
 	/**
@@ -47,8 +45,28 @@ public class FXEdge {
 	 */
 	private String pathStyleId = DEFAULT_STYLEID;
 	private String pointStyleId = DEFAULT_POINTSTYLEID;
+	private EndPointProviderI endPointProvider = DEFAULT_ENDPOINTPROVIDER;
 	List<FXEdgeWayPoint> wayPoints = new ArrayList<FXEdgeWayPoint>();
 	Map<FXEdgeWayPoint, Node> wayPointHandles = new HashMap<FXEdgeWayPoint, Node>();
+
+	/** Each edge ends up in the center of each node. */
+	public final static EndPointProviderI DEFAULT_ENDPOINTPROVIDER = new EndPointProviderI() {
+		/** From the middle of the source */
+		public MoveTo createLineFrom(Node sourceNode) {
+			Bounds theSourceBounds = sourceNode.getBoundsInParent();
+			MoveTo theMoveTo = new MoveTo(theSourceBounds.getMinX() + theSourceBounds.getWidth() / 2,
+					theSourceBounds.getMinY() + theSourceBounds.getHeight() / 2);
+			return theMoveTo;
+		}
+
+		/** To the middle of the destination */
+		public LineTo createLineTo(Node endNode) {
+			Bounds theDestinationBounds = endNode.getBoundsInParent();
+			LineTo theLineTo = new LineTo(theDestinationBounds.getMinX() + theDestinationBounds.getWidth() / 2,
+					theDestinationBounds.getMinY() + theDestinationBounds.getHeight() / 2);
+			return theLineTo;
+		}
+	};
 
 	public FXEdge(FXGraph aGraph, FXNode aSource, FXNode aDestination) {
 		graph = aGraph;
@@ -87,10 +105,8 @@ public class FXEdge {
 		Path thePath = new Path();
 		thePath.setUserData(this);
 		Tooltip.install(thePath, toolTipPath);
-		// From the middle of the source
-		Bounds theSourceBounds = source.wrappedNode.getBoundsInParent();
-		MoveTo theMoveTo = new MoveTo(theSourceBounds.getMinX() + theSourceBounds.getWidth() / 2,
-				theSourceBounds.getMinY() + theSourceBounds.getHeight() / 2);
+		// From provided point of the source
+		MoveTo theMoveTo = endPointProvider.createLineFrom(source.wrappedNode);
 		thePath.getElements().add(theMoveTo);
 
 		wayPointHandles.clear();
@@ -99,17 +115,15 @@ public class FXEdge {
 		for (FXEdgeWayPoint theWayPoint : wayPoints) {
 			HoverBoundedRectangle wayNode = compileDisplayShapeFor(theWayPoint, aCurrentZoomLevel);
 			wayPointHandles.put(theWayPoint, wayNode);
-
 			LineTo theLineTo = new LineTo(theWayPoint.positionX * aCurrentZoomLevel,
 					theWayPoint.positionY * aCurrentZoomLevel);
 			thePath.getElements().add(theLineTo);
 			wayNode.bindPath(thePath);
 		}
+						
 
-		// To the middle of the destination
-		Bounds theDestinationBounds = destination.wrappedNode.getBoundsInParent();
-		LineTo theLineTo = new LineTo(theDestinationBounds.getMinX() + theDestinationBounds.getWidth() / 2,
-				theDestinationBounds.getMinY() + theDestinationBounds.getHeight() / 2);
+		// To the provided point of the destination
+		LineTo theLineTo = endPointProvider.createLineTo(destination.wrappedNode);
 		thePath.getElements().add(theLineTo);
 
 		thePath.setId(pathStyleId);
@@ -131,6 +145,18 @@ public class FXEdge {
 			aPane.getChildren().add(theNode);
 			theNode.toBack();
 		}
+	}
+
+	/**
+	 * A {@link EndPointProviderI} is called while
+	 * {@link #computeDisplayShape()} to define the source and destination of
+	 * the edge. The {@link #DEFAULT_ENDPOINTPROVIDER} is used if not set.
+	 * 
+	 * @param endPointProvider
+	 * @since 20161005
+	 */
+	public final void setEndPointProvider(EndPointProviderI endPointProvider) {
+		this.endPointProvider = endPointProvider == null ? DEFAULT_ENDPOINTPROVIDER : endPointProvider;
 	}
 
 	public final void setStyleId(String styleId) {
